@@ -8,6 +8,7 @@ namespace ChallengeTicTacToe
         private static GameBoard gameBoard = new GameBoard();
         private static Player player1 = new Player("Player 1", 'X');
         private static Player player2 = new Player("Player 2", 'O');
+        private static ai computerPlayer = new ai();
 
         // Add the players to an array so we can access them by turn order
         private static Player[] players = { player1, player2 };
@@ -15,13 +16,32 @@ namespace ChallengeTicTacToe
         // Setup some tracking vars
         private static bool gameOver = false;
         private static int playersTurn = 0;
+        private static char aiPlayed = ' ';
 
         static void Main(string[] args)
         {
 
             // Ask the players for their names
             player1.Name = AskTheUser("What is Player 1's name?");
-            player2.Name = AskTheUser("What is Player 2's name?");
+
+            player2.Name = AskTheUser("What is Player 2's name? (Leave blank for AI)");
+            if (player2.Name == "")
+            {
+                string userInput = AskTheUser("What level of AI?\n1. Easy\n2. Hard\n\nLevel: ");
+
+                if (int.TryParse(userInput, out int aiLevel))
+                {
+                    if (aiLevel == 1 || aiLevel == 2)
+                    {
+                        player2.SetAILevel(aiLevel);
+                        player2.SetAILevel(aiLevel);
+                    } else
+                    {
+                        Console.WriteLine("Invalid response. Setting Player 2 to human player.");
+                        player2.SetAILevel(0);
+                    }
+                }
+            }
 
             // Start the game loop
             while (true)
@@ -41,9 +61,23 @@ namespace ChallengeTicTacToe
                 // Print the game board
                 gameBoard.PrintBoard();
 
+                if (aiPlayed != ' ')
+                {
+                    Console.WriteLine($"{player2.Name} played to position {aiPlayed}.");
+                    aiPlayed = ' ';
+                }
+
                 // Get the position the player wants to play in
                 while (true)
                 {
+                    // See if this is an AI user
+                    if (players[playersTurn].Type != "Player")
+                    {
+                        field = computerPlayer.MakeMove(players[playersTurn], gameBoard);
+                        aiPlayed = field;
+                        break;
+                    }
+
                     field = ChooseYourField(players[playersTurn].Name);
 
                     // Make sure the input was valid, which means it is not a player piece and a valid number

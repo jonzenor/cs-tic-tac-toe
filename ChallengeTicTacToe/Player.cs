@@ -5,12 +5,38 @@ namespace ChallengeTicTacToe
     {
         public string Name { get; set; }
         public char Piece { get; }
+        public string Type { get; set; }
         private int[,] points = { { 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 } };
+
 
         public Player(string name, char piece)
         {
             this.Name = name;
             this.Piece = piece;
+            this.Type = "Player";
+        }
+
+        public void SetAILevel(int aiLevel)
+        {
+            switch (aiLevel)
+            {
+                case 0:
+                    this.Type = "Player";
+                    this.Name = "Player 2";
+                    break;
+                case 1:
+                    this.Type = "Easy";
+                    this.Name = "Arty";
+                    break;
+                case 2:
+                    this.Type = "Hard";
+                    this.Name = "Einstein";
+                    break;
+                default:
+                    this.Type = "Player";
+                    this.Name = "Player 2";
+                    break;
+            }
         }
 
         public void ResetScore()
@@ -91,6 +117,26 @@ namespace ChallengeTicTacToe
             }
 
             return false;
+        }
+
+        public int CheckRowScore(int row)
+        {
+            return points[row, 0] + points[row, 1] + points[row, 2];
+        }
+
+        public int CheckColumnScore(int col)
+        {
+            return points[0, col] + points[1, col] + points[2, col];
+        }
+
+        public int CheckDiagnalScore()
+        {
+            return points[0, 0] + points[1, 1] + points[2, 2];
+        }
+
+        public int CheckReverseDiagnalScore()
+        {
+            return points[0, 2] + points[1, 1] + points[2, 0];
         }
     }
 }
