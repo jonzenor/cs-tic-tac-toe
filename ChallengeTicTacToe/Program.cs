@@ -18,6 +18,9 @@ namespace ChallengeTicTacToe
         private static int playersTurn = 0;
         private static char aiPlayed = ' ';
 
+        public static bool DebugMode { get; set; } = false;
+        public static bool ShowNumbers { get; set; } = false;
+
         static void Main(string[] args)
         {
 
@@ -119,6 +122,22 @@ namespace ChallengeTicTacToe
                     continue; // We have the game over conditions at the top of the loop, so go back to the top
                 }
 
+                if (field == 'd')
+                {
+                    DebugMode = (DebugMode == true) ? false : true;
+                    Console.WriteLine("Debug mode changed. Press enter to continue.");
+                    Console.ReadLine();
+                    continue;
+                }
+
+                if (field == 'n')
+                {
+                    ShowNumbers = (ShowNumbers == true) ? false : true;
+                    Console.WriteLine("Show Numbers toggled. Press enter to continue.");
+                    Console.ReadLine();
+                    continue;
+                }
+
                 // Play the piece for the player and add it to their personal score
                 gameBoard.playPiece(field, players[playersTurn].Piece);
                 players[playersTurn].TrackScore(field);
@@ -176,7 +195,10 @@ namespace ChallengeTicTacToe
             Console.WriteLine($"Congratulations, {players[playersTurn].Name}! You won!");
             gameOver = true;
 
-            Console.WriteLine($"{gameBoard.turnOrder}");
+            if (DebugMode)
+            {
+                Console.WriteLine($"{gameBoard.turnOrder}");
+            }
 
             // Just in case they want to play again, let the loser start first next time
             TogglePlayersTurn();
@@ -210,6 +232,11 @@ namespace ChallengeTicTacToe
         public static bool ValidFieldPlacement(char field)
         {
             if (char.IsNumber(field) && char.IsNumber(gameBoard.GetPosition(field)))
+            {
+                return true;
+            }
+
+            if (field == 'd' || field == 'n')
             {
                 return true;
             }

@@ -140,8 +140,15 @@ namespace ChallengeTicTacToe
                 char display1 = (char.IsNumber(boardPosition[i, 0])) ? ' ' : boardPosition[i, 0];
                 char display2 = (char.IsNumber(boardPosition[i, 1])) ? ' ' : boardPosition[i, 1];
                 char display3 = (char.IsNumber(boardPosition[i, 2])) ? ' ' : boardPosition[i, 2];
-                //Console.WriteLine($" {boardPosition[i,0]} | {boardPosition[i,1]} | {boardPosition[i,2]} ");
-                Console.WriteLine($" {display1} | {display2} | {display3} ");
+
+                if (Program.ShowNumbers)
+                {
+                    Console.WriteLine($" {boardPosition[i,0]} | {boardPosition[i,1]} | {boardPosition[i,2]} ");
+                } else
+                {
+                    Console.WriteLine($" {display1} | {display2} | {display3} ");
+
+                }
 
                 // Print the final row of padding
                 if (i < 2)
