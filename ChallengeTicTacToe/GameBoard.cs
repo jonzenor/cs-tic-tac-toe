@@ -4,9 +4,11 @@ namespace ChallengeTicTacToe
     public class GameBoard
     {
         char[,] boardPosition = { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '9' } };
+        public int OpenPositions { get; set; }
 
         public GameBoard()
         {
+            this.OpenPositions = 9;
         }
 
         public void ResetBoard()
@@ -17,6 +19,8 @@ namespace ChallengeTicTacToe
 
                 boardPosition[grid[0], grid[1]] = i.ToString()[0];
             }
+
+            this.OpenPositions = 9;
         }
 
         public char GetPosition(char position)
@@ -30,7 +34,7 @@ namespace ChallengeTicTacToe
 
             if (grid[0] == -1)
             {
-                throw new Exception("Invalid grid position.");
+                throw new Exception("Invalid grid position, " + position.ToString() );
             }
 
             return boardPosition[grid[0], grid[1]];
@@ -47,6 +51,7 @@ namespace ChallengeTicTacToe
             }
 
             boardPosition[grid[0], grid[1]] = piece;
+            this.OpenPositions--;
         }
 
         private int[] DecipherPosition(char position)
@@ -100,7 +105,7 @@ namespace ChallengeTicTacToe
         }
 
         // See if there are any remaining positions on the game board
-        public bool OpenPositions()
+        public bool VerifyOpenPositions()
         {
             for (int i = 0; i < boardPosition.GetLength(0); i++)
             {
@@ -126,7 +131,11 @@ namespace ChallengeTicTacToe
                 Console.WriteLine("   |   |   ");
 
                 // Print the main row of info
-                Console.WriteLine($" {boardPosition[i,0]} | {boardPosition[i,1]} | {boardPosition[i,2]} ");
+                char display1 = (char.IsNumber(boardPosition[i, 0])) ? ' ' : boardPosition[i, 0];
+                char display2 = (char.IsNumber(boardPosition[i, 1])) ? ' ' : boardPosition[i, 1];
+                char display3 = (char.IsNumber(boardPosition[i, 2])) ? ' ' : boardPosition[i, 2];
+                //Console.WriteLine($" {boardPosition[i,0]} | {boardPosition[i,1]} | {boardPosition[i,2]} ");
+                Console.WriteLine($" {display1} | {display2} | {display3} ");
 
                 // Print the final row of padding
                 if (i < 2)

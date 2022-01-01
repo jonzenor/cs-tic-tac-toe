@@ -5,7 +5,7 @@ namespace ChallengeTicTacToe
     {
         public string Name { get; set; }
         public char Piece { get; }
-        public string Type { get; set; }
+        public string Difficulty { get; set; }
         private int[,] points = { { 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 } };
 
 
@@ -13,7 +13,7 @@ namespace ChallengeTicTacToe
         {
             this.Name = name;
             this.Piece = piece;
-            this.Type = "Player";
+            this.Difficulty = "Player";
         }
 
         public void SetAILevel(int aiLevel)
@@ -21,19 +21,23 @@ namespace ChallengeTicTacToe
             switch (aiLevel)
             {
                 case 0:
-                    this.Type = "Player";
+                    this.Difficulty = "Player";
                     this.Name = "Player 2";
                     break;
                 case 1:
-                    this.Type = "Easy";
-                    this.Name = "Arty";
+                    this.Difficulty = "Easy";
+                    this.Name = "Sleepy";
                     break;
                 case 2:
-                    this.Type = "Hard";
+                    this.Difficulty = "Medium";
+                    this.Name = "Arty";
+                    break;
+                case 3:
+                    this.Difficulty = "Hard";
                     this.Name = "Einstein";
                     break;
                 default:
-                    this.Type = "Player";
+                    this.Difficulty = "Player";
                     this.Name = "Player 2";
                     break;
             }

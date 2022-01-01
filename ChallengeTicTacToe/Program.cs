@@ -27,11 +27,11 @@ namespace ChallengeTicTacToe
             player2.Name = AskTheUser("What is Player 2's name? (Leave blank for AI)");
             if (player2.Name == "")
             {
-                string userInput = AskTheUser("What level of AI?\n1. Easy\n2. Hard\n\nLevel: ");
+                string userInput = AskTheUser("\nWhat level of AI?\n1. Easy\n2. Medium\n3. Impossible\n\nLevel: ");
 
                 if (int.TryParse(userInput, out int aiLevel))
                 {
-                    if (aiLevel == 1 || aiLevel == 2)
+                    if (aiLevel == 1 || aiLevel == 2 || aiLevel == 3)
                     {
                         player2.SetAILevel(aiLevel);
                         player2.SetAILevel(aiLevel);
@@ -53,6 +53,8 @@ namespace ChallengeTicTacToe
                     {
                         break;
                     }
+
+                    aiPlayed = ' ';
                 }
 
                 // Set some tracking variables
@@ -71,9 +73,10 @@ namespace ChallengeTicTacToe
                 while (true)
                 {
                     // See if this is an AI user
-                    if (players[playersTurn].Type != "Player")
+                    if (players[playersTurn].Difficulty != "Player")
                     {
-                        field = computerPlayer.MakeMove(players[playersTurn], gameBoard);
+                        int opponent = (playersTurn == 0) ? 1 : 0;
+                        field = computerPlayer.MakeMove(players[playersTurn], gameBoard, players[opponent]);
                         aiPlayed = field;
                         break;
                     }
@@ -109,10 +112,10 @@ namespace ChallengeTicTacToe
                 }
 
                 // See if there are still open positions
-                if (!gameBoard.OpenPositions())
+                if (gameBoard.OpenPositions == 0)
                 {
-                    Console.WriteLine("Cat's game. Better luck next time.");
-                    gameOver = true;
+                    AnnounceTieGame();
+                    continue;
                 }
 
                 TogglePlayersTurn();
@@ -155,6 +158,16 @@ namespace ChallengeTicTacToe
             gameOver = true;
 
             // Just in case they want to play again, let the loser start first next time
+            TogglePlayersTurn();
+        }
+
+        public static void AnnounceTieGame()
+        {
+            gameBoard.PrintBoard();
+
+            Console.WriteLine("Cat's game. Better luck next time.");
+            gameOver = true;
+
             TogglePlayersTurn();
         }
 
