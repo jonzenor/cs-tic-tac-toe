@@ -4,6 +4,8 @@ namespace ChallengeTicTacToe
     public class GameBoard
     {
         char[,] boardPosition = { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '9' } };
+
+        public string turnOrder = "";
         public int OpenPositions { get; set; }
 
         public GameBoard()
@@ -19,6 +21,8 @@ namespace ChallengeTicTacToe
 
                 boardPosition[grid[0], grid[1]] = i.ToString()[0];
             }
+
+            turnOrder = "";
 
             this.OpenPositions = 9;
         }
@@ -52,6 +56,8 @@ namespace ChallengeTicTacToe
 
             boardPosition[grid[0], grid[1]] = piece;
             this.OpenPositions--;
+
+            turnOrder += ":" + piece.ToString() + "-" + position.ToString() + " ";
         }
 
         private int[] DecipherPosition(char position)

@@ -113,7 +113,7 @@ namespace ChallengeTicTacToe
                 {
                     for (int j = 0; j < 3; j++)
                     {
-                        winningMove = (char.IsNumber(gameBoard.GetPosition(rowPositions[i,j]))) ? rowPositions[i,j] : ' ';
+                        winningMove = (char.IsNumber(gameBoard.GetPosition(rowPositions[i, j]))) ? rowPositions[i, j] : ' ';
                         if (winningMove != ' ')
                         {
                             return winningMove;
@@ -166,19 +166,7 @@ namespace ChallengeTicTacToe
                 char playersEdge = CheckEdges(gameBoard, opponentPlayer.Piece);
                 if (playersEdge != ' ')
                 {
-                    switch(playersEdge)
-                    {
-                        case '2':
-                            return (rnd.Next(0, 1) == 0) ? '7' : '9';
-                        case '4':
-                            return (rnd.Next(0, 1) == 0) ? '3' : '9';
-                        case '6':
-                            return (rnd.Next(0, 1) == 0) ? '7' : '1';
-                        case '8':
-                            return (rnd.Next(0, 1) == 0) ? '1' : '3';
-                        default:
-                            return ' ';
-                    }
+                    return GetOppositeEdge(playersEdge);
                 }
             }
 
@@ -246,6 +234,7 @@ namespace ChallengeTicTacToe
             {
                 char ourCorner = CheckCorners(gameBoard, aiPlayer.Piece);
                 char ourCenter = CheckCenter(gameBoard, aiPlayer.Piece);
+                char ourEdge = CheckEdges(gameBoard, aiPlayer.Piece);
 
                 // Check for the one case where we have the center first
                 if (ourCenter != ' ')
@@ -260,6 +249,33 @@ namespace ChallengeTicTacToe
 
                     // If the opponent does not have an edge, then they have the opposite corner, so pick any edge
                     return PickEdge();
+                }
+
+                // See if we took an edge and the opponent takes...
+                if (ourEdge != ' ')
+                {
+                    char opponentsEdge = CheckEdges(gameBoard, opponentPlayer.Piece);
+
+                    // See if the opponent took the center
+                    char opponentsCenter = CheckCenter(gameBoard, opponentPlayer.Piece);
+                    if (opponentsCenter != ' ')
+                    {
+                        return GetOpenCornerNearSpecificEdge(gameBoard, ourEdge);
+                    }
+
+                    // See if the opponent took a second edge
+                    char opponentsAdjacentEdge = CheckEdges(gameBoard, opponentPlayer.Piece, opponentsEdge);
+                    if (opponentsAdjacentEdge != ' ')
+                    {
+                        return GetTrappedCorner(gameBoard, opponentPlayer.Piece);
+                    }
+
+                    // See if the opponent took a corner, we take an edge
+                    char opponentsCorner = CheckCorners(gameBoard, opponentPlayer.Piece);
+                    if (opponentsCorner != ' ')
+                    {
+                        return GetAdjacentOpenCorner(gameBoard, opponentsCorner);
+                    }
                 }
 
                 // See if the opponent has the corner opposite of us
@@ -348,7 +364,8 @@ namespace ChallengeTicTacToe
                 if (char.IsNumber(gameBoard.GetPosition('5')))
                 {
                     return '5';
-                } else
+                }
+                else
                 {
                     // Find the corner that has an edge open next to it
                     char openEdge = GetOpenEdge(gameBoard);
@@ -483,7 +500,7 @@ namespace ChallengeTicTacToe
             {
                 // If piece is not 0, then we're looking for a player's piece
                 char thisPiece = gameBoard.GetPosition(edge);
-                if ( thisPiece == piece)
+                if (thisPiece == piece)
                 {
                     return edge;
                 }
@@ -656,5 +673,120 @@ namespace ChallengeTicTacToe
             return ' ';
         }
 
+        private char GetOppositeEdge(char position)
+        {
+            switch (position)
+            {
+                case '2':
+                    return '8';
+                case '4':
+                    return '6';
+                case '6':
+                    return '4';
+                case '8':
+                    return '2';
+            }
+
+            return ' ';
+        }
+
+        private char GetTrappedCorner(GameBoard gameBoard, char piece)
+        {
+            char[] corners = { '1', '3', '7', '9' };
+
+            foreach (char position in corners)
+            {
+                if (position == '1')
+                {
+                    if (gameBoard.GetPosition('2') == piece && gameBoard.GetPosition('4') == piece) { return position; }
+                }
+
+                if (position == '3')
+                {
+                    if (gameBoard.GetPosition('2') == piece && gameBoard.GetPosition('6') == piece) { return position; }
+                }
+
+                if (position == '7')
+                {
+                    if (gameBoard.GetPosition('4') == piece && gameBoard.GetPosition('8') == piece) { return position; }
+                }
+
+                if (position == '9')
+                {
+                    if (gameBoard.GetPosition('8') == piece && gameBoard.GetPosition('6') == piece) { return position; }
+                }
+
+            }
+
+            return ' ';
+        }
+
+        private char GetAdjacentEdge(char position)
+        {
+            switch (position)
+            {
+                case '2':
+                    return (rnd.Next(0, 1) == 0) ? '6' : '4';
+                case '4':
+                    return (rnd.Next(0, 1) == 0) ? '2' : '8';
+                case '6':
+                    return (rnd.Next(0, 1) == 0) ? '2' : '8';
+                case '8':
+                    return (rnd.Next(0, 1) == 0) ? '6' : '4';
+            }
+
+            return ' ';
+        }
+
+        private char GetEdgeWithEmptyCorners(GameBoard gameBoard)
+        {
+            if (char.IsNumber(gameBoard.GetPosition('1')) && char.IsNumber(gameBoard.GetPosition('3')))
+            {
+                return '2';
+            }
+
+            if (char.IsNumber(gameBoard.GetPosition('1')) && char.IsNumber(gameBoard.GetPosition('7')))
+            {
+                return '4';
+            }
+
+            if (char.IsNumber(gameBoard.GetPosition('9')) && char.IsNumber(gameBoard.GetPosition('3')))
+            {
+                return '6';
+            }
+
+            if (char.IsNumber(gameBoard.GetPosition('7')) && char.IsNumber(gameBoard.GetPosition('9')))
+            {
+                return '8';
+            }
+
+            return ' ';
+
+        }
+
+        private char GetAdjacentOpenCorner(GameBoard gameBoard, char position)
+        {
+            if (position == '1')
+            {
+                return (char.IsNumber(gameBoard.GetPosition('2'))) ? '3' : '7';
+            }
+
+            if (position == '3')
+            {
+                return (char.IsNumber(gameBoard.GetPosition('2'))) ? '1' : '9';
+            }
+
+            if (position == '7')
+            {
+                return (char.IsNumber(gameBoard.GetPosition('4'))) ? '1' : '9';
+            }
+
+            if (position == '9')
+            {
+                return (char.IsNumber(gameBoard.GetPosition('6'))) ? '3' : '7';
+            }
+
+            return ' ';
+        }
     }
 }

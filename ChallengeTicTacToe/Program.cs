@@ -22,7 +22,25 @@ namespace ChallengeTicTacToe
         {
 
             // Ask the players for their names
-            player1.Name = AskTheUser("What is Player 1's name?");
+            player1.Name = AskTheUser("What is Player 1's name? (Leave blank for AI");
+            if (player1.Name == "")
+            {
+                string userInput = AskTheUser("\nWhat level of AI?\n1. Easy\n2. Medium\n3. Impossible\n\nLevel: ");
+
+                if (int.TryParse(userInput, out int aiLevel))
+                {
+                    if (aiLevel == 1 || aiLevel == 2 || aiLevel == 3)
+                    {
+                        player1.SetAILevel(aiLevel);
+                        player1.SetAILevel(aiLevel);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid response. Setting Player 1 to human player.");
+                        player1.SetAILevel(0);
+                    }
+                }
+            }
 
             player2.Name = AskTheUser("What is Player 2's name? (Leave blank for AI)");
             if (player2.Name == "")
@@ -65,7 +83,8 @@ namespace ChallengeTicTacToe
 
                 if (aiPlayed != ' ')
                 {
-                    Console.WriteLine($"{player2.Name} played to position {aiPlayed}.");
+                    int opponent = (playersTurn == 0) ? 1 : 0;
+                    Console.WriteLine($"{players[opponent].Name} played to position {aiPlayed}.");
                     aiPlayed = ' ';
                 }
 
@@ -156,6 +175,8 @@ namespace ChallengeTicTacToe
 
             Console.WriteLine($"Congratulations, {players[playersTurn].Name}! You won!");
             gameOver = true;
+
+            Console.WriteLine($"{gameBoard.turnOrder}");
 
             // Just in case they want to play again, let the loser start first next time
             TogglePlayersTurn();
